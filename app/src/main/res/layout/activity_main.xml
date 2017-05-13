@@ -26,4 +26,16 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:layout_marginTop="35dp" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Test"
+        android:id="@+id/test"
+        android:onClick="test_response"
+        android:layout_alignTop="@+id/send"
+        android:layout_toRightOf="@+id/send"
+        android:layout_toEndOf="@+id/send"
+        android:layout_marginLeft="32dp"
+        android:layout_marginStart="32dp" />
 </RelativeLayout>
