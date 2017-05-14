@@ -7,7 +7,8 @@ import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
-
+import android.widget.Switch;
+import android.widget.SeekBar;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -22,7 +23,7 @@ import io.socket.client.Socket;
 import io.socket.emitter.Emitter;
 
 public class MainActivity extends AppCompatActivity {
-    TextView output;
+
     class Server extends AsyncTask {
         @Override
         protected Object doInBackground(Object[] objects) {
@@ -130,28 +131,100 @@ public class MainActivity extends AppCompatActivity {
             AsyncTask startServer = new Server();
             Log.d("SocketIO", "STARTED");
             startServer.execute();
-
             //output.setText((String)  startServer.execute().get());
         }catch(Exception e){
             e.printStackTrace();
         }
     }
 
-    void test_response(View button){
+    void connect_toy(View button){
         try {
-            AsyncTask start_json_task =  new JsonTask();
-            Log.d("JsonTask", "STARTED");
-            start_json_task.execute("http://192.168.1.21:34567/GetToys");
+            Boolean toy_connected = toy_manager.connect_toy();
+
+            if(toy_connected){
+                enable_toy_buttons(toy_manager.toy_name);
+                button.setEnabled(false);
+            }else{
+                output.setText("Toy was unable to connect. Please connect using Body Chat.");
+            }
+
         }catch (Exception e){
             e.printStackTrace();
         }
     }
 
+    void enable_toy_buttons(String toy_name){
+
+        if(toy_name.equals("max")){
+            max_vibrate_txt.setVisibility(View.VISIBLE);
+            max_pump_strength_txt.setVisibility(View.VISIBLE);
+            max_vibrate.setVisibility(View.VISIBLE);
+            max_pump_strength.setVisibility(View.VISIBLE);
+        }else if(toy_name.equals("nora")){
+            nora_vibrate_txt.setVisibility(View.VISIBLE);
+            nora_rotate_speed_txt.setVisibility(View.VISIBLE);
+            nora_toggle_dir_txt.setVisibility(View.VISIBLE);
+            nora_vibrate.setVisibility(View.VISIBLE);
+            nora_rotate_speed.setVisibility(View.VISIBLE);
+            nora_toggle_dir.setVisibility(View.VISIBLE);
+        }else{
+            output.setText("Unable to identify toy");
+            Log.d("enable_toy_button:", "Un able to identify toy: $"+ toy_name+ "$");
+        }
+    }
+
+    SeekBar.OnSeekBarChangeListener createSeakBarListener(final String command){
+        return new SeekBar.OnSeekBarChangeListener(){
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
+                Log.d("Seekbar " + command, Integer.toString(i));
+
+                toy_manager.send_command(command, i);
+            }
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+            }
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+            }
+        };
+    }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         output = (TextView) findViewById(R.id.output);
+        toy_manager = new ToyManager();
 
+        max_vibrate_txt = (TextView) findViewById(R.id.max_vibrate_txt);
+        max_pump_strength_txt  = (TextView) findViewById(R.id.max_pump_strength_txt);
+        max_vibrate = (SeekBar) findViewById(R.id.max_vibrate);
+        max_vibrate.setOnSeekBarChangeListener(createSeakBarListener("Vibrate"));
+        max_pump_strength = (SeekBar) findViewById(R.id.max_pump_strength);
+        max_pump_strength.setOnSeekBarChangeListener(createSeakBarListener("AirAuto"));
+
+        nora_vibrate_txt = (TextView) findViewById(R.id.nora_vibrate_txt);
+        nora_rotate_speed_txt = (TextView) findViewById(R.id.nora_rotate_speed_txt);
+        nora_toggle_dir_txt  = (TextView) findViewById(R.id.nora_toggle_dir_txt);
+        nora_vibrate = (SeekBar) findViewById(R.id.nora_vibrate);
+        nora_rotate_speed = (SeekBar) findViewById(R.id.nora_rotate_speed);
+        nora_toggle_dir = (Switch) findViewById(R.id.nora_toggle_dir);
     }
+
+    //class global items
+    TextView output;
+    TextView max_vibrate_txt;
+    TextView max_pump_strength_txt;
+    SeekBar max_vibrate;
+    SeekBar max_pump_strength;
+
+    TextView nora_vibrate_txt;
+    TextView nora_rotate_speed_txt;
+    TextView nora_toggle_dir_txt;
+    SeekBar nora_vibrate;
+    SeekBar nora_rotate_speed;
+    Switch nora_toggle_dir;
+
+    ToyManager toy_manager;
+
 }
