@@ -6,7 +6,7 @@ io.on('connection', function(client){
   client.on('disconnect', function(){});
   client.on('echo', function(data) {
   	console.log("echo back");
-    client.emit('echo back', "I am server");
+    client.emit('echo back', "I am server.  Client ID:" + client.id );
   });
 
 });

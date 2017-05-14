@@ -25,10 +25,11 @@ import io.socket.emitter.Emitter;
 public class MainActivity extends AppCompatActivity {
 
     class Server extends AsyncTask {
+        String message = "";
         @Override
-        protected Object doInBackground(Object[] objects) {
+        protected String doInBackground(Object[] objects) {
             try {
-                final Socket socket = IO.socket("http://10.15.202.148:3001");
+                final Socket socket = IO.socket("http://192.168.1.18:3001");
                 socket.on(Socket.EVENT_CONNECT, new Emitter.Listener() {
 
                     @Override
@@ -42,13 +43,14 @@ public class MainActivity extends AppCompatActivity {
 
                     @Override
                     public void call(Object... args) {
-                        String message = "";
+                        message = "";
                         for(int i=0;i < args.length; i++){
                             message = message + args[i] + " ";
                         }
+
                         Log.d("SocketIO", "Message from Server " + message);
                         Log.d("SocketIO", "Message from Server " + args.length);
-                        output.setText(message);
+//                        output.setText(message);
                         socket.disconnect();
                     }
 
@@ -61,11 +63,17 @@ public class MainActivity extends AppCompatActivity {
 
                 });
                 socket.connect();
+
             }catch (Exception e){
                 e.printStackTrace();
             }
-
+            Log.d("SocketIO messsage:", message);
             return "";
+        }
+        @Override
+        protected void onPostExecute(Object result) {
+            super.onPostExecute(result);
+            output.setText((String)result);
         }
     }
 
@@ -128,10 +136,10 @@ public class MainActivity extends AppCompatActivity {
 
     void send_to_server(View button){
         try {
-            AsyncTask startServer = new Server();
+            Server startServer = new Server();
             Log.d("SocketIO", "STARTED");
             startServer.execute();
-            //output.setText((String)  startServer.execute().get());
+            output.setText(startServer.message);
         }catch(Exception e){
             e.printStackTrace();
         }
