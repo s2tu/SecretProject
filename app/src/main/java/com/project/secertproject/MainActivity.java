@@ -18,64 +18,14 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 
+import de.greenrobot.event.EventBus;
 import io.socket.client.IO;
 import io.socket.client.Socket;
 import io.socket.emitter.Emitter;
 
 public class MainActivity extends AppCompatActivity {
 
-    class Server extends AsyncTask {
-        String message = "";
-        @Override
-        protected String doInBackground(Object[] objects) {
-            try {
-                final Socket socket = IO.socket("http://192.168.1.18:3001");
-                socket.on(Socket.EVENT_CONNECT, new Emitter.Listener() {
 
-                    @Override
-                    public void call(Object... args) {
-                        socket.emit("echo", "hello"); //mobile sends a message
-
-                        //socket.disconnect();
-                    }
-
-                }).on("echo back", new Emitter.Listener() {  //if mobile recieves echo back then print message
-
-                    @Override
-                    public void call(Object... args) {
-                        message = "";
-                        for(int i=0;i < args.length; i++){
-                            message = message + args[i] + " ";
-                        }
-
-                        Log.d("SocketIO", "Message from Server " + message);
-                        Log.d("SocketIO", "Message from Server " + args.length);
-//                        output.setText(message);
-                        socket.disconnect();
-                    }
-
-                }).on(Socket.EVENT_DISCONNECT, new Emitter.Listener() {
-
-                    @Override
-                    public void call(Object... args) {
-                        Log.d("SocketIO", "disconnected");
-                    }
-
-                });
-                socket.connect();
-
-            }catch (Exception e){
-                e.printStackTrace();
-            }
-            Log.d("SocketIO messsage:", message);
-            return "";
-        }
-        @Override
-        protected void onPostExecute(Object result) {
-            super.onPostExecute(result);
-            output.setText((String)result);
-        }
-    }
 
    class JsonTask extends AsyncTask{
 
@@ -135,14 +85,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     void send_to_server(View button){
-        try {
-            Server startServer = new Server();
-            Log.d("SocketIO", "STARTED");
-            startServer.execute();
-            output.setText(startServer.message);
-        }catch(Exception e){
-            e.printStackTrace();
-        }
+            server = new Server();
+            //output.setText(server.get_message());
     }
 
     void connect_toy(View button){
@@ -197,6 +141,8 @@ public class MainActivity extends AppCompatActivity {
             }
         };
     }
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -219,6 +165,37 @@ public class MainActivity extends AppCompatActivity {
         nora_toggle_dir = (Switch) findViewById(R.id.nora_toggle_dir);
     }
 
+    @Override
+    protected void onPostResume() {
+        super.onPostResume();
+        EventBus.getDefault().register(this);
+    }
+
+    @Override
+    protected void onDestroy() {
+        if(server != null) {
+            server.disconnect_server();
+        }
+        super.onDestroy();
+    }
+
+    @Override
+    protected void onPause() {
+        EventBus.getDefault().unregister(this);
+        super.onPause();
+
+    }
+
+    public void onEvent(final ServerReplyEvent event){
+        Log.d("EVENT:", event.getMessage());
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                output.setText(event.getMessage());
+            }
+        });
+        //
+    }
     //class global items
     TextView output;
     TextView max_vibrate_txt;
@@ -234,5 +211,6 @@ public class MainActivity extends AppCompatActivity {
     Switch nora_toggle_dir;
 
     ToyManager toy_manager;
+    Server server;
 
 }

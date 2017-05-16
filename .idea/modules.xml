@@ -2,6 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/SecertProject.iml" filepath="$PROJECT_DIR$/SecertProject.iml" />
       <module fileurl="file://$PROJECT_DIR$/SecretProject.iml" filepath="$PROJECT_DIR$/SecretProject.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
     </modules>
