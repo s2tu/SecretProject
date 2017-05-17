@@ -1,9 +1,17 @@
-var server = require('http').createServer();
-var io = require('socket.io')(server);
-var users = {};
-console.log("Server Started");
 
-io.on('connection', function(client){
+
+var express = require('express'),
+    app = express(),
+//    server = require('https').createServer(app),
+    //server = app.listen(3001)
+ 
+server = app.listen(process.env.PORT || 3001),
+io = require('socket.io').listen(server);
+
+    //io = require('socket.io')(server);
+
+var users = {}
+io.sockets.on('connection', function(client){
   client.on('event', function(data){});
   client.on('disconnect', function(){
   	console.log("client has disconnected" + client.id);
@@ -49,9 +57,9 @@ io.on('connection', function(client){
 
 
 
-
-var port = 3001;
+var port = process.env.PORT || 3001;
 console.log("Listening on port: " + port);
-server.listen(port);
+//server.listen(port);
+
 
 

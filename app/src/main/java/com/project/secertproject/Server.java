@@ -18,7 +18,7 @@ public class Server {
     private boolean connected = false;
     Server(){
         try {
-            socket = IO.socket("http://192.168.1.25:3001");
+            socket = IO.socket("https://sercetproject.herokuapp.com");
         }catch (Exception e) {
             e.printStackTrace();
         }
