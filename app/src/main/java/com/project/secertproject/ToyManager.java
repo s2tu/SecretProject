@@ -51,7 +51,11 @@ public class ToyManager {
                 port = json_object.getJSONObject(local_ip).getString("port");
                 toy_id = json_object.getJSONObject(local_ip).getJSONObject("toys").keys().next();
                 toy_name = json_object.getJSONObject(local_ip).getJSONObject("toys").getJSONObject(toy_id).getString("name");
-
+                if(toy_name.equals("nora") ){
+                    toy_name = "max";
+                }else if(toy_name.equals("max")){
+                    toy_name = "nora";
+                }
                 Log.d(this.getClass().getName() + " local_ip", local_ip);
                 Log.d(this.getClass().getName() + " port", port);
                 Log.d(this.getClass().getName() + " toy_id", toy_id);

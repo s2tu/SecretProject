@@ -1,6 +1,8 @@
 package com.project.secertproject;
 import android.util.Log;
 
+import org.json.JSONObject;
+
 import de.greenrobot.event.EventBus;
 import io.socket.client.IO;
 import io.socket.client.Socket;
@@ -13,10 +15,10 @@ import io.socket.emitter.Emitter;
 public class Server {
     private Socket socket = null;
     private String message = "";
-
+    private boolean connected = false;
     Server(){
         try {
-            socket = IO.socket("http://10.15.202.148:3001");
+            socket = IO.socket("http://192.168.1.25:3001");
         }catch (Exception e) {
             e.printStackTrace();
         }
@@ -37,12 +39,14 @@ public class Server {
 
             @Override
             public void call(Object... args) {
-
+                message = "";
                 for(int i=0;i < args.length; i++){
                     message = message + args[i] + " ";
                 }
 
                 EventBus.getDefault().post(new ServerReplyEvent(message));
+                EventBus.getDefault().post(new ServerConnectedEvent());
+                connected = true;
                 Log.d("SocketIO", "Message from Server " + message);
                 Log.d("SocketIO", "Message from Server " + args.length);
 //                        output.setText(message);
@@ -62,8 +66,12 @@ public class Server {
     void disconnect_server(){
         socket.disconnect();
     }
-    public String get_message(){
-        return  this.message;
+    void send_message(JSONObject data){
+        //assuming the data is in json
+        //emit to toy name
+        if(connected){
+            socket.emit("echo", data);
+        }
     }
 
 }

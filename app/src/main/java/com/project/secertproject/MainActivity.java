@@ -5,10 +5,13 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Switch;
 import android.widget.SeekBar;
+
+import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -17,6 +20,8 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.HashMap;
+import java.util.Map;
 
 import de.greenrobot.event.EventBus;
 import io.socket.client.IO;
@@ -84,11 +89,21 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    void send_to_server(View button){
-            server = new Server();
-            //output.setText(server.get_message());
-    }
+    void connect_to_server(View button){
+        server = new Server();
+        button.setEnabled(false);
 
+    }
+    void send_to_server(View button){
+        if(server != null) {
+            Map<String, String> data = new HashMap<>();
+            data.put("toy_name", "test");
+            data.put("command", "test command");
+            data.put("value", Integer.toString(1));
+            JSONObject json = new JSONObject(data);
+            server.send_message(json);
+        }
+    }
     void connect_toy(View button){
         try {
             Boolean toy_connected = toy_manager.connect_toy();
@@ -130,8 +145,18 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
                 Log.d("Seekbar " + command, Integer.toString(i));
+                //instead of send to toy we want to send to server here
+                //toy name
+                //command
+                //strgnt
+                Map<String, String> data = new HashMap<>();
+                data.put("toy_name", toy_manager.toy_name);
+                data.put("command", command);
+                data.put("value", Integer.toString(i));
+                JSONObject json = new JSONObject(data);
+                server.send_message(json);
 
-                toy_manager.send_command(command, i);
+                //toy_manager.send_command(command, i);
             }
             @Override
             public void onStartTrackingTouch(SeekBar seekBar) {
@@ -163,6 +188,11 @@ public class MainActivity extends AppCompatActivity {
         nora_vibrate = (SeekBar) findViewById(R.id.nora_vibrate);
         nora_rotate_speed = (SeekBar) findViewById(R.id.nora_rotate_speed);
         nora_toggle_dir = (Switch) findViewById(R.id.nora_toggle_dir);
+
+
+        connect_to_server = (Button) findViewById(R.id.connect_to_server);
+        connect_toy = (Button) findViewById(R.id.connect);
+        send = (Button) findViewById(R.id.send);
     }
 
     @Override
@@ -185,18 +215,54 @@ public class MainActivity extends AppCompatActivity {
         super.onPause();
 
     }
+    public void onEvent(final ServerConnectedEvent event){
+        Log.d("EVENT:", "connected");
 
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                send.setEnabled(true);
+                try {
+                    Boolean toy_connected = toy_manager.connect_toy();
+                    if(toy_connected){
+                        enable_toy_buttons(toy_manager.toy_name);
+                        //button.setEnabled(false);
+                    }else{
+                        output.setText("Toy was unable to connect. Please connect using Body Chat.");
+                    }
+
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
+            }
+        });
+        //
+    }
     public void onEvent(final ServerReplyEvent event){
         Log.d("EVENT:", event.getMessage());
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
                 output.setText(event.getMessage());
+                try{
+                    JSONObject data = new JSONObject(event.getMessage());
+                    toy_manager.send_command(data.getString("command"), Integer.parseInt(data.getString("value")));
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
+
             }
         });
+
+
         //
     }
     //class global items
+
+    Button send;
+    Button connect_to_server;
+    Button connect_toy;
+
     TextView output;
     TextView max_vibrate_txt;
     TextView max_pump_strength_txt;

@@ -17,11 +17,11 @@
         android:text="Hello World!" />
 
     <Button
-        android:text="Send To Server"
+        android:text="Connect To Server"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/send"
-        android:onClick="send_to_server"
+        android:id="@+id/connect_to_server"
+        android:onClick="connect_to_server"
         android:layout_below="@+id/output"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
@@ -33,10 +33,11 @@
         android:text="Connect"
         android:id="@+id/connect"
         android:onClick="connect_toy"
-        android:layout_alignTop="@+id/send"
-        android:layout_toRightOf="@+id/send"
-        android:layout_toEndOf="@+id/send"
+        android:layout_alignTop="@+id/connect_to_server"
+        android:layout_toRightOf="@+id/connect_to_server"
+        android:layout_toEndOf="@+id/connect_to_server"
         android:layout_marginLeft="32dp"
+        android:visibility="gone"
         android:layout_marginStart="32dp" />
 
     <TextView
@@ -45,11 +46,11 @@
         android:text="Vibrate"
         android:id="@+id/max_vibrate_txt"
         android:textSize="20dp"
-        android:layout_below="@+id/send"
+        android:layout_below="@+id/connect_to_server"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:layout_marginTop="28dp"
-        android:visibility="invisible" />
+        android:visibility="gone" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -60,10 +61,10 @@
         android:layout_below="@+id/max_vibrate"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:visibility="invisible" />
+        android:visibility="gone" />
 
     <SeekBar
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/max_vibrate"
         android:layout_below="@+id/max_vibrate_txt"
@@ -71,12 +72,12 @@
         android:layout_alignParentStart="true"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"
-        android:visibility="invisible"
+        android:visibility="gone"
         android:max="20"
         android:indeterminate="false" />
 
     <SeekBar
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/max_pump_strength"
         android:max="3"
@@ -85,7 +86,7 @@
         android:layout_alignParentStart="true"
         android:layout_alignRight="@+id/max_vibrate"
         android:layout_alignEnd="@+id/max_vibrate"
-        android:visibility="invisible" />
+        android:visibility="gone" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -97,10 +98,10 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:layout_marginTop="32dp"
-        android:visibility="invisible" />
+        android:visibility="gone" />
 
     <SeekBar
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/nora_vibrate"
         android:max="20"
@@ -109,7 +110,7 @@
         android:layout_alignParentStart="true"
         android:layout_alignRight="@+id/max_pump_strength"
         android:layout_alignEnd="@+id/max_pump_strength"
-        android:visibility="invisible" />
+        android:visibility="gone" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -120,10 +121,10 @@
         android:layout_below="@+id/nora_vibrate"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:visibility="invisible" />
+        android:visibility="gone" />
 
     <SeekBar
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/nora_rotate_speed"
         android:layout_below="@+id/nora_rotate_speed_txt"
@@ -131,7 +132,7 @@
         android:layout_alignParentStart="true"
         android:layout_alignRight="@+id/nora_vibrate"
         android:layout_alignEnd="@+id/nora_vibrate"
-        android:visibility="invisible" />
+        android:visibility="gone" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -142,7 +143,7 @@
         android:layout_below="@+id/nora_rotate_speed"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:visibility="invisible" />
+        android:visibility="gone" />
 
     <Switch
         android:layout_width="wrap_content"
@@ -152,6 +153,22 @@
         android:layout_below="@+id/nora_toggle_dir_txt"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:visibility="invisible" />
+        android:visibility="gone" />
+
+    <Button
+        android:text="Send Message"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/connect_to_server"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginLeft="10dp"
+        android:layout_marginStart="10dp"
+        android:id="@+id/send"
+        android:enabled="false"
+        android:visibility="gone"
+        android:layout_toLeftOf="@+id/connect"
+        android:layout_toStartOf="@+id/connect"
+        android:onClick="send_to_server" />
 
 </RelativeLayout>
