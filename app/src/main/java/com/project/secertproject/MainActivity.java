@@ -58,7 +58,6 @@ public class MainActivity extends AppCompatActivity {
                 while ((line = reader.readLine()) != null) {
                     buffer.append(line + "\n");
                     Log.d("Response: ", "> " + line);   //here u ll get whole response...... :-)
-
                 }
 
                 return buffer.toString();
@@ -203,7 +202,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        
+
         connect_to_server = (Button) findViewById(R.id.connect_to_server);
         connect_toy = (Button) findViewById(R.id.connect);
         send = (Button) findViewById(R.id.send);
