@@ -21,6 +21,9 @@ public class ToyManager {
     Boolean send_command(String command, int value){
         Boolean sucess = false;
         String url = "http://" + local_ip +":" + port + "/"+ command +"?v="+ value + "&t=" + toy_id;
+        if(command.equals("RotateChange")){
+            url = "http://" + local_ip +":" + port + "/"+ command + "?t=" + toy_id;
+        }
         try{
             String output = new JsonTask().execute(url).get();
             Log.d(this.getClass().getName() + " output", output);

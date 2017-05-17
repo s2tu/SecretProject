@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Switch;
@@ -186,10 +187,23 @@ public class MainActivity extends AppCompatActivity {
         nora_rotate_speed_txt = (TextView) findViewById(R.id.nora_rotate_speed_txt);
         nora_toggle_dir_txt  = (TextView) findViewById(R.id.nora_toggle_dir_txt);
         nora_vibrate = (SeekBar) findViewById(R.id.nora_vibrate);
+        nora_vibrate.setOnSeekBarChangeListener(createSeakBarListener("Vibrate"));
         nora_rotate_speed = (SeekBar) findViewById(R.id.nora_rotate_speed);
+        nora_rotate_speed.setOnSeekBarChangeListener(createSeakBarListener("Rotate"));
         nora_toggle_dir = (Switch) findViewById(R.id.nora_toggle_dir);
+        //exception case
+        nora_toggle_dir.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                Map<String, String> data = new HashMap<>();
+                data.put("toy_name", toy_manager.toy_name);
+                data.put("command", "RotateChange");
+                data.put("value", Integer.toString(0));
+                JSONObject json = new JSONObject(data);
+                server.send_message(json);
+            }
+        });
 
-
+        
         connect_to_server = (Button) findViewById(R.id.connect_to_server);
         connect_toy = (Button) findViewById(R.id.connect);
         send = (Button) findViewById(R.id.send);
